@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update_attributes(user_params)
+    if @user.update_attributes(user_all_params)
       flash[:success] = "ユーザー情報を更新しました。"
       redirect_to @user
     else
@@ -78,11 +78,20 @@ class UsersController < ApplicationController
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :password, :department, :password_confirmation)
+      params.require(:user).permit(:name, :email, :department, :affiliation, :employee_number,
+                                    :uid, :password, :password_confirmation)
     end
     
     def basic_info_params
-      params.require(:user).permit(:basic_time, :work_time)
+      params.require(:user).permit(:basic_time,:work_time, :basic_work_time, 
+                                    :designated_work_start_time, :designated_work_end_time)
+    end
+    
+    def user_all_params
+      params.require(:user).permit(:name, :email, :department, :affiliation, :employee_number,
+                                    :uid, :password, :password_confirmation, :basic_time,
+                                    :work_time, :basic_work_time, 
+                                    :designated_work_start_time, :designated_work_end_time)
     end
     
     # 管理権限者、または現在ログインしているユーザーを許可します。
