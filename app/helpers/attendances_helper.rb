@@ -43,14 +43,23 @@ module AttendancesHelper
   end
   
   # 時間外時間の計算
+  def overtime_hour(user, attendance)
+    if attendance.next_day == false # 当日中に残業終了（翌日のチェックボックスにチェクされていない時）
+      on_the_day(user, attendance)
+    else # 翌日に残業終了（翌日のチェックボックスにチェクされている時）
+      next_day(user, attendance)
+    end
+  end
+  
+  # 時間外時間の計算のための要素（当日に残業を終えた時の計算）
   def on_the_day(user, attendance)
     format("%.2f", (((attendance.overtime_requested_at - user.designated_work_end_time) / 60) / 60.0))
   end
   
+  # 時間外時間の計算のための要素（翌日に残業を終えた時の計算）
   def next_day(user, attendance)
     format("%.2f", (((attendance.overtime_requested_at - user.designated_work_end_time) / 60) / 60.0) + 24)
   end
   
-
 
 end

@@ -118,7 +118,7 @@
 
           </td>
           <td><!-- 時間外時間 -->
-          <%= on_the_day(@user, day) if day.overtime_requested_at.present? %>
+          <%= overtime_hour(@user, day) if day.overtime_requested_at.present? %>
           </td>
           <td><!-- 業務処理内容 -->
           </td>
