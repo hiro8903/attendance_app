@@ -121,6 +121,7 @@
           <%= overtime_hour(@user, day) if day.overtime_requested_at.present? %>
           </td>
           <td><!-- 業務処理内容 -->
+            <%= day.reason %>
           </td>
           <td><!-- 指示者確認㊞ -->
           </td>

@@ -79,7 +79,7 @@ class AttendancesController < ApplicationController
     end
     
     def request_params
-       params.require(:attendance).permit(:overtime_requested_at, :next_day)
+       params.require(:attendance).permit(:overtime_requested_at, :next_day, :reason)
     end
 
     # 管理権限者、または現在ログインしているユーザーを許可します。
