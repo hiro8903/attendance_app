@@ -41,5 +41,16 @@ module AttendancesHelper
     end
     return attendances
   end
+  
+  # 時間外時間の計算
+  def on_the_day(user, attendance)
+    format("%.2f", (((attendance.overtime_requested_at - user.designated_work_end_time) / 60) / 60.0))
+  end
+  
+  def next_day(user, attendance)
+    format("%.2f", (((attendance.overtime_requested_at - user.designated_work_end_time) / 60) / 60.0) + 24)
+  end
+  
+
 
 end

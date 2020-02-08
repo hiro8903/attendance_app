@@ -1,9 +1,9 @@
 class AttendancesController < ApplicationController
   include AttendancesHelper
-  before_action :set_user, only: :edit
-  before_action :logged_in_user, only: [:update, :edit]
-  before_action :admin_or_correct_user, only: [:edit, :update ]
-  before_action :set_one_month, only: :edit
+  before_action :set_user, only: [:edit]
+  before_action :logged_in_user, only: [:update, :edit, :edit_overtime_request, :update_overtime_request]
+  before_action :admin_or_correct_user, only: [:edit, :update , :edit_overtime_request]
+  before_action :set_one_month, only: [:edit]
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。"
   
@@ -36,7 +36,7 @@ class AttendancesController < ApplicationController
       ActiveRecord::Base.transaction do # トランザクションを開始します。
         attendances_params.each do |id, item|
           @attendance = Attendance.find(id)
-          @attendance.update_attributes!(item)
+          @attendance.update_attributes!(item) # update_attributes  → falseを返す update_attributes! → 例外を投げる
         end
         flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
         redirect_to user_url(date: params[:date])
@@ -50,12 +50,36 @@ class AttendancesController < ApplicationController
           end 
         end
       redirect_to attendances_edit_user_url(date: params[:date])
-  end  
+  end
+  
+  def edit_overtime_request
+    @user = User.find(params[:user_id])
+    @attendance = Attendance.find(params[:id])
+  end
+    
+  def update_overtime_request
+
+    @user = User.find(params[:user_id])
+    @attendance = Attendance.find(params[:id])
+    if @attendance.update_attributes!(request_params)
+      flash[:success] = "残業申請しました。"
+      redirect_to @user
+    else
+      flash[:info] = "無効な入力データがあった為、申請をキャンセルしました。"
+      redirect_to @user  
+    end
+  end
+  
+
   
    private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+    end
+    
+    def request_params
+       params.require(:attendance).permit(:overtime_requested_at)
     end
 
     # 管理権限者、または現在ログインしているユーザーを許可します。

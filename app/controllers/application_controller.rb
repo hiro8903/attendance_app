@@ -77,4 +77,5 @@ class ApplicationController < ActionController::Base
     @attendances_of_week = @user.attendances.where(worked_on: @first_day_of_week..@last_day_of_week).order(:worked_on)
 
   end
+
 end

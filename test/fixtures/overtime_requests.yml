@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  states: 1
+  overtime: 2020-02-02 08:13:29
+  reason: MyString
+  attendance: one
+
+two:
+  states: 1
+  overtime: 2020-02-02 08:13:29
+  reason: MyString
+  attendance: two

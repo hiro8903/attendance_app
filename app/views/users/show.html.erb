@@ -73,8 +73,9 @@
     <tbody>
       <% @attendances.each do |day| %>
         <tr>
-          <td><!-- 残業申請ボタン -->
-            <%= link_to "残業申請", "#(@user, day)", method: :patch, class: "btn btn-primary btn-attendance" %>
+          <!--<td data-target="#exampleModal<!%= day.id %>"><!-- 残業申請ボタン -->
+          <td>
+            <%= link_to "残業申請", edit_overtime_request_user_attendance_path(@user, day), remote: true, class: "btn btn-primary" %>
           </td>
           <td><!-- 日付 -->
             <%= l(day.worked_on, format: :short) %>
@@ -109,10 +110,15 @@
             <%= day.note %>
           </td>
           <td><!-- 終了予定時間ー時 -->
+            <!--<!%= day.overtime_requested_at %>-->
+            <%= l(day.overtime_requested_at, format: :hour) if day.overtime_requested_at.present? %>
           </td>
           <td><!-- 終了予定時間ー分 -->
+            <%= l(day.overtime_requested_at, format: :min) if day.overtime_requested_at.present? %>
+
           </td>
           <td><!-- 時間外時間 -->
+          <%= on_the_day(@user, day) if day.overtime_requested_at.present? %>
           </td>
           <td><!-- 業務処理内容 -->
           </td>
@@ -150,3 +156,7 @@
     
   </table>
 </div>
+
+
+<!--モーダルウインドウ表示-->
+<div id="edit-overtime-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

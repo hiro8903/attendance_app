@@ -23,6 +23,8 @@ class UsersController < ApplicationController
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
     @superiors = User.where(superior: true)
+    @attendance = Attendance.find(params[:id])
+
   end
   
   def show_one_week
