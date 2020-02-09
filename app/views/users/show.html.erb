@@ -107,7 +107,6 @@
             <% end %>
           </td>
           <td><!-- 備考 -->
-            <%= day.note %>
           </td>
           <td><!-- 終了予定時間ー時 -->
             <!--<!%= day.overtime_requested_at %>-->
@@ -124,6 +123,12 @@
             <%= day.reason %>
           </td>
           <td><!-- 指示者確認㊞ -->
+            <% if day.overtime_request_destination.present? %>
+              <%= "" if day.overtime_request_state == "なし" %>
+              <%= "#{day.overtime_request_destination}に申請中" if day.overtime_request_state == "申請中" %>
+              <%= "残業承認" if day.overtime_request_state == "承認" %>
+              <%= "残業否認" if day.overtime_request_state == "否認" %>
+            <% end %>
           </td>
         </tr>
       <% end %>

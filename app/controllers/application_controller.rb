@@ -75,7 +75,10 @@ class ApplicationController < ActionController::Base
     Date.current.beginning_of_week(:monday) : params[:date].to_date
     @last_day_of_week = @first_day_of_week.end_of_week(:monday)
     @attendances_of_week = @user.attendances.where(worked_on: @first_day_of_week..@last_day_of_week).order(:worked_on)
-
   end
 
+  def request_states
+    @request_states = %w[なし 申請中 承認 否認]
+  end
+  
 end

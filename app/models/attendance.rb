@@ -1,7 +1,8 @@
 class Attendance < ApplicationRecord
   belongs_to :user
   has_one :overtime_request, dependent: :destroy
-  
+  # enum overtime_request_state:[:no, :requesting, :approval, :Denial]
+
   validates :worked_on, presence: true
   validates :note, length: { maximum: 50 }
   validates :instruction, length: { maximum: 50 }

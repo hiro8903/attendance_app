@@ -4,7 +4,8 @@ class AttendancesController < ApplicationController
   before_action :logged_in_user, only: [:update, :edit, :edit_overtime_request, :update_overtime_request]
   before_action :admin_or_correct_user, only: [:edit, :update , :edit_overtime_request]
   before_action :set_one_month, only: [:edit]
-
+  before_action :request_states, only: [:edit_overtime_request] # 試しにやったらうまく行ったのであとで正しいアクションを指定する
+  
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。"
   
   def update
@@ -54,14 +55,15 @@ class AttendancesController < ApplicationController
   
   def edit_overtime_request
     @user = User.find(params[:user_id])
+    @superiors = User.where(superior: true)
     @attendance = Attendance.find(params[:id])
   end
     
   def update_overtime_request
-
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
     if @attendance.update_attributes!(request_params)
+      @attendance.update_attributes!(overtime_request_state: "申請中")
       flash[:success] = "残業申請しました。"
       redirect_to @user
     else
@@ -79,7 +81,7 @@ class AttendancesController < ApplicationController
     end
     
     def request_params
-       params.require(:attendance).permit(:overtime_requested_at, :next_day, :reason)
+       params.require(:attendance).permit(:overtime_requested_at, :next_day, :reason, :overtime_request_destination, :overtime_request_state)
     end
 
     # 管理権限者、または現在ログインしているユーザーを許可します。
