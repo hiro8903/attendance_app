@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :show_one_week]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :show_one_week, :edit_overtime_reception, :update_overtime_reception]
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :show_one_week]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :index]
@@ -24,7 +24,7 @@ class UsersController < ApplicationController
     @worked_sum = @attendances.where.not(started_at: nil).count
     @superiors = User.where(superior: true)
     @attendance = Attendance.find(params[:id])
-
+    @overtime_requests = Attendance.where(overtime_request_destination: @user.name.to_s) && Attendance.where(overtime_request_state: "申請中")
   end
   
   def show_one_week
@@ -77,6 +77,40 @@ class UsersController < ApplicationController
     end
     redirect_to users_url and return
   end
+  
+  def edit_overtime_reception
+ 
+    @overtime_requests = Attendance.where(overtime_request_destination: @user.name.to_s) && Attendance.where(overtime_request_state: "申請中")
+
+  end
+  
+  def update_overtime_reception
+    if overtime_reception_params.each do |id, item|
+      attendance = Attendance.find(id)
+     attendance.update_attributes!(item) # update_attributes  → falseを返す update_attributes! → 例外を投げる
+      end
+      flash[:success] = "残業申請を更新しました。"
+      redirect_to user_url and return
+    else
+      flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+      redirect_to user_url and return
+    end
+  end
+
+
+# def update_overtime_reception これでも正しく動いた
+# ActiveRecord::Base.transaction do # トランザクションを開始します。
+#     overtime_reception_params.each do |id, item|
+#       attendance = Attendance.find(id)
+#       attendance.update_attributes!(item)
+#     end
+#   end
+#   flash[:success] = "残業申請を更新しました。"
+#   redirect_to user_url(date: params[:date])
+#   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+#   flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+#   redirect_to user_url(date: params[:date])
+#   end
 
   private
 
@@ -96,6 +130,12 @@ class UsersController < ApplicationController
                                     :work_time, :basic_work_time, 
                                     :designated_work_start_time, :designated_work_end_time)
     end
+    
+    def overtime_reception_params
+      params.require(:user).permit(attendances: [:overtime_request_state])[:attendances]
+    end
+    
+    
     
     # 管理権限者、または現在ログインしているユーザーを許可します。
     def admin_or_correct_user

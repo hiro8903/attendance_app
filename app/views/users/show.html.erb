@@ -27,11 +27,18 @@
     </tr>
   </table>
 </div>
-<% if current_user.superior? %>
+<!--<!% if current_user.superior? %>-->
   <%= link_to "【所属長承認申請のお知らせ】", "#" %><br>
   <%= link_to "【勤怠変更申請のお知らせ】", "#" %><br>
-  <%= link_to "【残業申請のお知らせ】", "#" %><br>
-<% end %>
+  <% if @overtime_requests.count >= 1 %>
+    <div class="text-danger border border-danger" %>
+      <%= link_to "【残業申請のお知らせ】", edit_overtime_reception_user_path(@user), remote: true, class: "text-danger" %>
+        <%= @overtime_requests.count %>件の通知があります<br>
+    </div>
+  <% else %>
+    <%= link_to "【残業申請のお知らせ】", edit_overtime_reception_user_path(@user), remote: true %><br>
+  <% end %>
+<!--<!% end %>-->
 <%= link_to "勤怠を編集", attendances_edit_user_path(date: @first_day), class: "btn btn-primary" %>
 <%= link_to "CSV出力", "#", class: "btn btn-primary" %><br>
 <%= link_to "勤怠修正ログ（承認済）", "#", class: "btn btn-primary" %>
@@ -166,3 +173,4 @@
 
 <!--モーダルウインドウ表示-->
 <div id="edit-overtime-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="edit_overtime_reception" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

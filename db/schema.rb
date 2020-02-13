@@ -36,8 +36,8 @@ ActiveRecord::Schema.define(version: 20200208125245) do
     t.string "password_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2020-02-08 23:00:00"
-    t.datetime "work_time", default: "2020-02-08 22:30:00"
+    t.datetime "basic_time", default: "2020-02-10 23:00:00"
+    t.datetime "work_time", default: "2020-02-10 22:30:00"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "remember_digest"
@@ -45,9 +45,9 @@ ActiveRecord::Schema.define(version: 20200208125245) do
     t.integer "employee_number"
     t.string "uid"
     t.boolean "superior", default: false
-    t.datetime "basic_work_time", default: "2020-02-08 23:00:00"
-    t.datetime "designated_work_start_time", default: "2020-02-09 01:00:00"
-    t.datetime "designated_work_end_time", default: "2020-02-09 10:00:00"
+    t.datetime "basic_work_time", default: "2020-02-10 23:00:00"
+    t.datetime "designated_work_start_time", default: "2020-02-11 01:00:00"
+    t.datetime "designated_work_end_time", default: "2020-02-11 10:00:00"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
