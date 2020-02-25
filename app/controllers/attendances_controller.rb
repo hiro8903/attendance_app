@@ -63,7 +63,7 @@ class AttendancesController < ApplicationController
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
     if @attendance.update_attributes!(request_params)
-      @attendance.update_attributes!(overtime_request_state: "申請中")
+      @attendance.update_attributes(overtime_request_state: "申請中")
       flash[:success] = "残業申請しました。"
       redirect_to @user
     else

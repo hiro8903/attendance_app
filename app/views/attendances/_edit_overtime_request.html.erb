@@ -32,7 +32,7 @@
                       <td class="<%= "wday#{@attendance.worked_on.wday}"%>">
                         <%= $days_of_the_week[@attendance.worked_on.wday] %>
                       </td>
-                      <td><%= f.time_field :overtime_requested_at, class: 'form-control' %></td>
+                      <td><%= f.time_field :overtime_requested_at, required: true, class: 'form-control' %></td>
                       <td><%= f.check_box :next_day %></td>
                       <td><%= f.text_field :reason, class: "form-control" %></td>
                       <td><%= f.select :overtime_request_destination, @superiors.pluck(:name)%></td>
@@ -41,7 +41,7 @@
                 </table>
                     
             <div class="center">
-              <%= f.submit "更新", class: "btn btn-lg btn-primary" %>
+              <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>
             </div>
             <% end %>
           </div>

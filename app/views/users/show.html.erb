@@ -32,11 +32,11 @@
   <%= link_to "【勤怠変更申請のお知らせ】", "#" %><br>
   <% if @overtime_requests.count >= 1 %>
     <div class="text-danger border border-danger" %>
-      <%= link_to "【残業申請のお知らせ】", edit_overtime_reception_user_path(@user), remote: true, class: "text-danger" %>
-        <%= @overtime_requests.count %>件の通知があります<br>
+      <%= link_to "【残業申請のお知らせ】#{@overtime_requests.count}件の通知があります", edit_overtime_reception_user_path(@user), remote: true, class: "text-danger" %>
+        <!--<!%= @overtime_requests.count %>件の通知があります<br>-->
     </div>
   <% else %>
-    <%= link_to "【残業申請のお知らせ】", edit_overtime_reception_user_path(@user), remote: true %><br>
+    <%=  "【残業申請のお知らせ】" %><br>
   <% end %>
 <!--<!% end %>-->
 <%= link_to "勤怠を編集", attendances_edit_user_path(date: @first_day), class: "btn btn-primary" %>
@@ -114,6 +114,8 @@
             <% end %>
           </td>
           <td><!-- 備考 -->
+          <%= day.overtime_requested_at if day.overtime_requested_at.present? %><br>
+          <%= @user.designated_work_start_time %>
           </td>
           <td><!-- 終了予定時間ー時 -->
             <!--<!%= day.overtime_requested_at %>-->

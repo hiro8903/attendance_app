@@ -42,6 +42,13 @@ module AttendancesHelper
     return attendances
   end
   
+  # Datetime型の年月日を1/1/1にして、時分秒を元のままtime型にして戻す
+  # Datetimeからtimeのところだけ使って残業時間の差分を計算するため使用する
+  def time_only(datetime)
+    Time.parse(datetime.strftime("1/1/1 %H:%M:%S"))
+  end
+  
+  
   # 時間外時間の計算
   def overtime_hour(user, attendance)
     if attendance.next_day == false # 当日中に残業終了（翌日のチェックボックスにチェクされていない時）
@@ -53,12 +60,20 @@ module AttendancesHelper
   
   # 時間外時間の計算のための要素（当日に残業を終えた時の計算）
   def on_the_day(user, attendance)
-    (((attendance.overtime_requested_at - user.designated_work_end_time) / 60) / 60.0)
+    # Datetimeからtimeのところだけ計算するため、年月日を統一させている
+    request_time = time_only(attendance.overtime_requested_at)
+    basic_end_time = time_only(user.designated_work_end_time)
+    
+    (((request_time - basic_end_time) / 60) / 60.0)
   end
   
   # 時間外時間の計算のための要素（翌日に残業を終えた時の計算）
   def next_day(user, attendance)
-    (((attendance.overtime_requested_at - user.designated_work_end_time) / 60) / 60.0) + 24
+    # Datetimeからtimeのところだけ計算するため、年月日を統一させている
+    request_time = time_only(attendance.overtime_requested_at)
+    basic_end_time = time_only(user.designated_work_end_time)
+    
+    (((request_time - basic_end_time) / 60) / 60.0) + 24
   end
   
 

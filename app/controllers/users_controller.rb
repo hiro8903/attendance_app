@@ -24,7 +24,7 @@ class UsersController < ApplicationController
     @worked_sum = @attendances.where.not(started_at: nil).count
     @superiors = User.where(superior: true)
     @attendance = Attendance.find(params[:id])
-    @overtime_requests = Attendance.where(overtime_request_destination: @user.name.to_s) && Attendance.where(overtime_request_state: "申請中")
+    @overtime_requests = Attendance.where(overtime_request_destination: @user.name, overtime_request_state: "申請中")
   end
   
   def show_one_week
@@ -79,15 +79,14 @@ class UsersController < ApplicationController
   end
   
   def edit_overtime_reception
- 
-    @overtime_requests = Attendance.where(overtime_request_destination: @user.name.to_s) && Attendance.where(overtime_request_state: "申請中")
-
+    @overtime_requests = Attendance.where(overtime_request_destination: @user.name, overtime_request_state: "申請中") 
+    @applying_users = User.joins(:attendances).merge(Attendance.where(overtime_request_destination: @user.name, overtime_request_state: "申請中") ).uniq
   end
   
   def update_overtime_reception
     if overtime_reception_params.each do |id, item|
       attendance = Attendance.find(id)
-     attendance.update_attributes!(item) # update_attributes  → falseを返す update_attributes! → 例外を投げる
+     attendance.update_attributes(item) # update_attributes  → falseを返す update_attributes! → 例外を投げる
       end
       flash[:success] = "残業申請を更新しました。"
       redirect_to user_url and return
@@ -132,7 +131,7 @@ class UsersController < ApplicationController
     end
     
     def overtime_reception_params
-      params.require(:user).permit(attendances: [:overtime_request_state])[:attendances]
+      params.require(:user).permit(attendances: [:overtime_request_state, :overtime_change])[:attendances]
     end
     
     

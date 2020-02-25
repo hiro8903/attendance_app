@@ -12,9 +12,12 @@ class Attendance < ApplicationRecord
   validate :finished_at_is_invalid_without_a_started_at
   # 出勤・退勤時間どちらも存在する時、出勤時間より早い退勤時間は無効
   validate :started_at_than_finished_at_fast_if_invalid
-  # 指定勤務終了時間より早い残業終了予定時間は無効 思った通りになっていない
+  # 指定勤務終了時間より早い残業終了予定時間は無効 思った通りになっていないのでとりあえずコメントアウト
   # validate :overtime_requested_at_earlier_than_designated_work_end_time_is_invalid
-
+  
+  # 残業申請を受け、変更を送信する際にチェックボックスにチェックが無い申請は変更されない
+  validates :overtime_change, acceptance: true
+  
   def finished_at_is_invalid_without_a_started_at
     errors.add(:started_at, "が必要です") if started_at.blank? && finished_at.present?
   end

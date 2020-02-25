@@ -8,11 +8,16 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-md-10 col-md-offset-1">
-            <h1 class="modal-title">【残業申請受付】</h1>
+            <!--<h1 class="modal-title">【残業申請受付ページ】</h1>-->
           
               <div>
               <%= form_with(model: @user, url: update_overtime_reception_user_path(params: {id: @user.id}), local: true, method: :patch) do |f| %>
+                
+                <% @applying_users.each do |user| %>
+
+
                 <table class="table table-bordered table-condensed table-hover">
+                  <h1>【<%= user.name %>からの申請】</h1>
                   <thead>
                     <tr>
                       <th>申請者</th>
@@ -30,26 +35,29 @@
 
                   <tbody>
                     <% @overtime_requests.each do |requ| %>
+                    <% if requ.user == user %> 
                      <%= f.fields_for "attendances[]", requ do |attendance| %>
                     <tr>
                       <td><%= requ.user.name %></td>
-                      <td><%= requ.worked_on %></td>
+                      <td><%= l(requ.worked_on, format: :short) %></td>
                       <td class="<%= "wday#{requ.worked_on.wday}"%>">
                         <%= $days_of_the_week[requ.worked_on.wday] %>
                       </td>
-                      <td><%=  %></td>
-                      <td><%=  %></td>
-                      <td><%= requ.overtime_request_state %></td>
-                      <td><%=   %></td>
-                      <td></td>
+                      <td><%= l(requ.overtime_requested_at, format: :time) %></td>
+                      <td><%= l(requ.user.designated_work_end_time, format: :time) %></td>
+                      <td><%= overtime_hour(@user, requ) %></td>
+                      <td><%= requ.reason %></td>
                       <td><%= attendance.select :overtime_request_state, %w[なし 申請中 承認 否認] %></td>
+                      <td><%= attendance.check_box :overtime_change  %></td>
                       <td></td>
-                      <td></td>
+                      <td><%= requ.overtime_request_state %></td>
                     </tr>
+                    <% end %>
                     <% end %>
                     <% end %>
                   </tbody>
                 </table>
+                <% end %>
                     
                 <div class="center">
                   <%= f.submit "更新", class: "btn btn-lg btn-primary" %>
