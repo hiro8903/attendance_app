@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
   resources :users do
   get '/users/:id', to: 'users#show_one_week', as: 'show_one_week'
+  
 
     member do
       get 'edit_basic_info'
@@ -25,6 +26,7 @@ Rails.application.routes.draw do
       patch 'attendances/update_one_month'
       get 'edit_overtime_reception'
       patch 'update_overtime_reception'
+      get '/users/:id/confirm', to: 'users#confirm_application', as: 'confirm'
     end
     resources :attendances, only: :update do
       member do

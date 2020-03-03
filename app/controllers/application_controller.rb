@@ -30,7 +30,21 @@ class ApplicationController < ActionController::Base
   def admin_user
     redirect_to root_url unless current_user.admin?
   end
+  
+  # 上長かどうか判定します。
+  def superior_user
+    redirect_to root_url unless current_user.superior?
+  end
 
+  # ログイン済みのユーザーか申請先のユーザー（上長）か確認する。
+  def logged_in_user_or_superior(user)
+    unless logged_in? || request_destination?(user)
+      store_location
+      flash[:danger] = "ログインしてください。"
+      redirect_to login_url
+    end
+  end
+  
   # ページ出力前に1ヶ月分のデータの存在を確認・セットします。
   def set_one_month 
     @first_day = params[:date].nil? ?

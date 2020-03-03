@@ -49,7 +49,8 @@
                       <td><%= requ.reason %></td>
                       <td><%= attendance.select :overtime_request_state, %w[なし 申請中 承認 否認] %></td>
                       <td><%= attendance.check_box :overtime_change  %></td>
-                      <td></td>
+                      <!--<td><!%= link_to "確認", confirm_user_path(requ.user_id, date: requ.worked_on), class: "btn btn-primary" %></td>-->
+                      <td><%= link_to "確認", confirm_user_path(requ.user_id, date: requ.worked_on.beginning_of_month), class: "btn btn-primary" %></td>
                       <td><%= requ.overtime_request_state %></td>
                     </tr>
                     <% end %>

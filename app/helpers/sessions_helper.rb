@@ -50,6 +50,11 @@ module SessionsHelper
     !current_user.nil?
   end
 
+  # 申請先のユーザー（上長）であればtrue,そうでなければfalseを返します。
+  def request_destination?(user)
+    requ.overtime_request_destination == "#{user.name}" && requ.overtime_request_state == "申請中"
+  end
+
   # 記憶しているURL(またはデフォルトURL)にリダイレクトします。
   def redirect_back_or(default_url)
     redirect_to(session[:forwarding_url] || default_url)

@@ -1,10 +1,11 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :show_one_week, :edit_overtime_reception, :update_overtime_reception]
-  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :show_one_week]
+  before_action :set_user, only: [:show, :confirm_application, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :show_one_week, :edit_overtime_reception, :update_overtime_reception]
+  before_action :logged_in_user, only: [:show, :index, :edit, :update, :destroy, :show_one_week]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :index]
-  before_action :admin_or_correct_user, only: [:show, :edit]
-  before_action :set_one_month, only: [:show, :show_one_week]
+  before_action :admin_or_correct_user, only: [:edit]
+  before_action :sperior_or_correct_user, only: [:show]
+  before_action :set_one_month, only: [:show, :confirm_application, :show_one_week]
   before_action :set_one_week , only: :show_one_week
   
   def index
@@ -29,7 +30,13 @@ class UsersController < ApplicationController
   
   def show_one_week
     @worked_sum = @attendances_of_week.where.not(started_at: nil).count
+  end
 
+  def confirm_application
+    @worked_sum = @attendances.where.not(started_at: nil).count
+    @superiors = User.where(superior: true)
+    @attendance = Attendance.find(params[:id])
+    @overtime_requests = Attendance.where(overtime_request_destination: @user.name, overtime_request_state: "申請中")
   end
 
   def new
@@ -140,6 +147,15 @@ class UsersController < ApplicationController
     def admin_or_correct_user
       @user = User.find(params[:id]) if @user.blank?
       unless current_user?(@user) || current_user.admin?
+        flash[:danger] = "権限がありません。"
+        redirect_to(root_url)
+      end  
+    end
+    
+    # 上長、または現在ログインしているユーザーを許可します。
+    def sperior_or_correct_user
+      @user = User.find(params[:user_id]) if @user.blank?
+      unless current_user?(@user) || current_user.superior?
         flash[:danger] = "権限がありません。"
         redirect_to(root_url)
       end  
