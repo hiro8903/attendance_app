@@ -1,7 +1,6 @@
 class Attendance < ApplicationRecord
   belongs_to :user
-  has_one :overtime_request, dependent: :destroy
-  # enum overtime_request_state:[:no, :requesting, :approval, :Denial]
+  enum change_request_state: { "なし" => 1, "申請中" => 2, "承認" => 3, "否認" => 4 }
 
   validates :worked_on, presence: true
   validates :note, length: { maximum: 50 }
@@ -33,5 +32,4 @@ class Attendance < ApplicationRecord
       errors.add(:designated_work_end_time, "より早い残業終了予定時間は無効です")
     end
   end
-
 end

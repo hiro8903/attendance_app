@@ -25,7 +25,8 @@
 
     <tr>
       <td>所属　<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
-      <td>名前　<%= @user.name %></td>
+      <td>名前　<%= @user.name %>
+      </td>
       <td>コード</td>
       <td></td>
       <td>出勤日数　<%= @worked_sum %>日</td>
@@ -87,6 +88,7 @@
 <!-- -->
     <tbody>
       <% @attendances.each do |day| %>
+
         <tr>
           <% if current_user?(@user) %>
             <!--<td data-target="#exampleModal<!%= day.id %>"><!-- 残業申請ボタン -->
@@ -124,8 +126,12 @@
             <% end %>
           </td>
           <td><!-- 備考 -->
-          <%= day.overtime_requested_at if day.overtime_requested_at.present? %><br>
-          <%= @user.designated_work_start_time %>
+          
+          <%= day.created_at %><br>
+          <%= day.updated_at %>
+          <br>
+
+
           </td>
           <td><!-- 終了予定時間ー時 -->
             <!--<!%= day.overtime_requested_at %>-->
@@ -149,8 +155,14 @@
               <%= "残業否認" if day.overtime_request_state == "否認" %>
             <% end %>
           </td>
+          <!--確認用のため、正しく実装後には下記の欄は削除する-->
+          <td><%= "初期値#{day.initial_started_at}" if day.initial_started_at.present? %></td>
+          <td><%= "一つ前の値#{day.just_before_started_at}" if day.just_before_started_at.present? %></td>
+          <td><%= User.find("#{day.change_request_destination}").name if day.change_request_destination.present? %></td>
+          <td><%= day.change_request_state if day.change_request_state.present? %></td>
         </tr>
       <% end %>
+ 
     </tbody>
     
     <tfoot>

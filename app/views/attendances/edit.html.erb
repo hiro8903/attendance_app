@@ -6,16 +6,21 @@
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
     <thead>
       <tr>
+ 
         <th>日付</th>
         <th>曜日</th>
         <th>出社</th>
         <th>退社</th>
+        <th>翌日</th>
         <th>在社時間</th>
         <th>備考</th>
+        <th>指示者確認</th>
       </tr>
     </thead>
+           
     <tbody>
       <% @attendances.each do |day| %>
+      
         <%= f.fields_for "attendances[]", day do |attendance| %>
           <tr>
             <td><%= l(day.worked_on, format: :short) %></td>
@@ -28,17 +33,32 @@
               <td><%= attendance.time_field :started_at, class: "form-control" %></td>
               <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
             <% end %>
+            <td><%= attendance.check_box :next_day  %></td>
             <td>            
               <% if day.started_at.present? && day.finished_at.present? %>
                 <%= working_times(day.started_at, day.finished_at) %>
               <% end %>
             </td>
             <td><%= attendance.text_field :note, class: "form-control" %></td>
+            <td><!-- 指示者確認 -->
+              <% if day.change_request_destination.present? %>
+                <%= attendance.collection_select :change_request_destination, @superiors, :id, :name, include_blank: true, selected: day.change_request_destination %>
+              <% else %>
+                <%= attendance.collection_select :change_request_destination, @superiors, :id, :name, include_blank: true, selected: 1 %>
+              <% end %>
+            
+            </td>
           </tr>
+    </tbody>
         <% end %>
       <% end %>
-    </tbody>
+    <tfoot>
+      <tr>
+        <td><%= %></td>
+      </tr>
+    </tfoot>
   </table>
+
 </div>
 
 <div class="center">
