@@ -37,14 +37,13 @@ class AttendancesController < ApplicationController
       ActiveRecord::Base.transaction do # トランザクションを開始します。
         attendances_params.each do |id, item|
           @attendance = Attendance.find(id)
-            if @attendance.change_request_destination.present?
+            # if @attendance.change_request_destination.present?
               @attendance.update_attributes!(initial_started_at: "#{@attendance.started_at}") if (@attendance.just_before_started_at == nil)
               @attendance.update_attributes!(initial_finished_at: "#{@attendance.finished_at}") if (@attendance.just_before_finished_at == nil)
               @attendance.update_attributes!(just_before_started_at: "#{@attendance.started_at}", just_before_finished_at: "#{@attendance.finished_at}")
-              @attendance.update_attributes!(item) if @attendance.change_request_destination.present? # update_attributes  → falseを返す update_attributes! → 例外を投げる
-              @attendance.update_attributes!(change_request_state: 2)
-              @attendance.update_attributes!(initial_started_at: "", initial_finished_at: "") if @attendance.initial_started_at.nil?
-            end
+              @attendance.update_attributes!(item)  # if @attendance.change_request_destination.present? # update_attributes  → falseを返す update_attributes! → 例外を投げる
+              @attendance.update_attributes!(change_request_state: 2) if @attendance.change_request_destination.present?
+            # end
         end
         flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
         redirect_to user_url(date: params[:date])
@@ -123,6 +122,7 @@ class AttendancesController < ApplicationController
       redirect_to @user  
     end
   end
+
   
 
   

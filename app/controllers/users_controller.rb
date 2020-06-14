@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :confirm_application, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :show_one_week, :edit_overtime_reception, :update_overtime_reception]
+  before_action :set_user, only: [:show, :confirm_application, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :show_one_week, :edit_overtime_reception, :update_overtime_reception, :edit_change_reception]
   before_action :logged_in_user, only: [:show, :index, :edit, :update, :destroy, :show_one_week]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :index]
@@ -26,6 +26,7 @@ class UsersController < ApplicationController
     @superiors = User.where(superior: true)
     @attendance = Attendance.find(params[:id])
     @overtime_requests = Attendance.where(overtime_request_destination: @user.name, overtime_request_state: "申請中")
+    @change_requests = Attendance.where(change_request_destination: @user.id, change_request_state: 2)
   end
   
   def show_one_week
@@ -90,6 +91,7 @@ class UsersController < ApplicationController
     @applying_users = User.joins(:attendances).merge(Attendance.where(overtime_request_destination: @user.name, overtime_request_state: "申請中") ).uniq
   end
   
+
   def update_overtime_reception
     if overtime_reception_params.each do |id, item|
       attendance = Attendance.find(id)
@@ -102,6 +104,27 @@ class UsersController < ApplicationController
       redirect_to user_url and return
     end
   end
+  
+  def edit_change_reception
+    @change_requests = Attendance.where(change_request_destination: @user.id, change_request_state: 2)
+    @change_request_users = User.joins(:attendances).merge(Attendance.where(change_request_destination: @user.id, change_request_state: 2) ).uniq
+  end
+  
+  def update_change_reception
+      if change_reception_params.each do |id, item|
+        attendance = Attendance.find(id)
+        attendance.update_attributes(item)# update_attributes  → falseを返す update_attributes! → 例外を投げる
+        end
+        flash[:success] = "勤怠変更申請を許可しました。"
+        redirect_to user_url and return
+      
+      else
+        flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+        redirect_to user_url and return
+      end
+    
+  end
+  
 
 
 # def update_overtime_reception これでも正しく動いた
@@ -141,7 +164,9 @@ class UsersController < ApplicationController
       params.require(:user).permit(attendances: [:overtime_request_state, :overtime_change])[:attendances]
     end
     
-    
+    def change_reception_params
+      params.require(:user).permit(attendances: [:change_request_state, :attendance_change_checkbox])[:attendances]
+    end
     
     # 管理権限者、または現在ログインしているユーザーを許可します。
     def admin_or_correct_user

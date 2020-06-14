@@ -26,7 +26,11 @@ Rails.application.routes.draw do
       patch 'attendances/update_one_month'
       get 'edit_overtime_reception'
       patch 'update_overtime_reception'
+      get 'edit_change_reception'
+      patch 'update_change_reception'
       get '/users/:id/confirm', to: 'users#confirm_application', as: 'confirm'
+      patch 'request_one_month'
+
     end
     resources :attendances, only: :update do
       member do

@@ -16,6 +16,10 @@ class Attendance < ApplicationRecord
   
   # 残業申請を受け、変更を送信する際にチェックボックスにチェックが無い申請は変更されない
   validates :overtime_change, acceptance: true
+  validates :attendance_change_checkbox, acceptance: true
+  
+
+
   
   def finished_at_is_invalid_without_a_started_at
     errors.add(:started_at, "が必要です") if started_at.blank? && finished_at.present?

@@ -1,0 +1,77 @@
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <!--<h1 class="modal-title">【勤怠変更申請受付ページ】</h1>-->
+          <%= form_with(model: @user, url: update_change_reception_user_path(params: {id: @user.id}), local: true, method: :patch) do |f| %>
+          <% @change_request_users.each do |user| %>
+            
+          <table class="table table-bordered table-condensed table-hover">
+            
+            <h1>【<%= user.name %>からの勤怠変更申請】</h1>
+            <thead>
+              <tr>
+                <th rowspan="2">申請者</th>
+                <th rowspan="2">日付</th>
+                <th rowspan="2">曜日</th>
+                <th colspan="2">変更前</th>
+                <th colspan="2">変更後</th>
+                <th rowspan="2">備考</th>
+                <th rowspan="2">指示者確認㊞</th>
+                <th rowspan="2">変更(未実装）</th>
+                <th rowspan="2">勤怠を確認する</th>
+              </tr>
+              <tr>
+                <th>出社</th>
+                <th>退社</th>
+                <th>出社</th>
+                <th>退社</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @change_requests.each do |requ| %>
+              <% if requ.user == user %> 
+               <%= f.fields_for "attendances[]", requ do |attendance| %>
+              <tr>
+                <td><%= requ.user.name %></td>
+                <td><%= l(requ.worked_on, format: :short) %></td>
+                <td class="<%= "wday#{requ.worked_on.wday}"%>">
+                  <%= $days_of_the_week[requ.worked_on.wday] %>
+                </td>
+                <td><%= l(requ.initial_started_at, format: :time) if requ.initial_started_at.present? %></td>
+                <td><%= l(requ.initial_finished_at, format: :time) if requ.initial_finished_at.present? %></td>
+                <td><%= l(requ.started_at, format: :time) %></td>
+                <td><%= l(requ.finished_at, format: :time) %></td>
+                <td><%= requ.note %></td>
+                <td><%= attendance.select :change_request_state, Attendance.change_request_states.keys.to_a %></td>
+                <td><%= f.check_box :attendance_change_checkbox %></td>
+                <td><%= link_to "確認", confirm_user_path(requ.user_id, date: requ.worked_on.beginning_of_month), class: "btn btn-primary"%></td>
+              </tr>
+              <% end %>
+              <% end %>
+              <% end %>
+            </tbody>
+            
+          </table>
+          
+          <% end %>
+                  
+            <div class="center">
+              <%= f.submit "更新", class: "btn btn-lg btn-primary" %>
+            </div>
+              
+          <% end %>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>

@@ -41,7 +41,7 @@
             </td>
             <td><%= attendance.text_field :note, class: "form-control" %></td>
             <td><!-- 指示者確認 -->
-              <% if day.change_request_destination.present? %>
+              <% if day.change_request_destination.present? && day.change_request_state == "申請中" %>
                 <%= attendance.collection_select :change_request_destination, @superiors, :id, :name, include_blank: true, selected: day.change_request_destination %>
               <% else %>
                 <%= attendance.collection_select :change_request_destination, @superiors, :id, :name, include_blank: true, selected: 1 %>

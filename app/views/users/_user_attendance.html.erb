@@ -34,10 +34,18 @@
     </tr>
   </table>
 </div>
-<% if current_user?(@user) %>
-  <% if current_user.superior? %>
+
+  <% if current_user.superior? && current_user?(@user) %>
     <%= link_to "【所属長承認申請のお知らせ】", "#" %><br>
-    <%= link_to "【勤怠変更申請のお知らせ】", "#" %><br>
+    
+    <% if @change_requests.count >= 1 %>
+      <%= link_to "【勤怠変更申請のお知らせ】#{@change_requests.count}件の通知があります", edit_change_reception_user_path(@user), remote: true, class: "text-danger" %><br>
+    <% else %>
+      <%=  "【勤怠変更申請のお知らせ】" %><br>
+    <% end %>
+ 
+    
+    
     <% if @overtime_requests.count >= 1 %>
       <div class="text-danger border border-danger" %>
         <%= link_to "【残業申請のお知らせ】#{@overtime_requests.count}件の通知があります", edit_overtime_reception_user_path(@user), remote: true, class: "text-danger" %>
@@ -45,7 +53,7 @@
     <% else %>
       <%=  "【残業申請のお知らせ】" %><br>
     <% end %>
-  <% end %>
+
   <%= link_to "勤怠を編集", attendances_edit_user_path(date: @first_day), class: "btn btn-primary" %>
   <%= link_to "CSV出力", "#", class: "btn btn-primary" %><br>
   <%= link_to "勤怠修正ログ（承認済）", "#", class: "btn btn-primary" %>
@@ -104,8 +112,9 @@
           </td>
           <td><!-- 勤怠登録ボタン-->
             <% if btn_text = attendance_state(day) %>
-              <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+              <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" if current_user?(@user) %>
             <% end %>
+            
           </td>
           <td><!-- 出社ー時 -->
             <%= l(day.started_at, format: :hour) if day.started_at.present? %>
